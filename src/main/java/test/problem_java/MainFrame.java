@@ -21,12 +21,7 @@ public class MainFrame extends javax.swing.JFrame {
     BufferedReader open;
     List<String> bigdata = new ArrayList<String>();
     Available av = new Available();
-    public void JFCH(JFileChooser jfch) {
-        jFileChooser1 = jfch;
-    }
-    public JFileChooser JFCH() {
-        return jFileChooser1;
-    }
+    String title = null;
 
     public MainFrame() {
         initComponents();
@@ -211,10 +206,8 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void invoice1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invoice1ActionPerformed
-        av.set("add");
+        av.set("add"); //Определение выборки "Добавление нового док-та" для кнопки "ок"
         inv = new Invoice();
-        String title = invoice1.getText() + " от " + sdform.format(new Date()) + " номер: " + inv.getNum();
-        list.addElement(title);
         jDialog1.setVisible(true);
         jDialog1.setTitle(invoice1.getText());
         String s = "Номер: " + inv.getNum() + "\n" + "Дата: " + sdform.format(new Date()) + "\n" + "Пользователь: " + "\n" + "Сумма: " + "\n" + "Валюта: " + "\n" + "Курс Валюты: " + "\n" + "Товар: " + "\n" + "Количество: ";
@@ -223,11 +216,11 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_invoice1ActionPerformed
 
     private void view1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_view1ActionPerformed
-        av.set("view");
+        av.set("view"); //Просмотр/изменение сущ-го документа
         if(!jList1.isSelectionEmpty()) {
             jDialog1.setVisible(true);
-            int a = jList1.getSelectedValue().indexOf("2");
-            jDialog1.setTitle(jList1.getSelectedValue().substring(0, a-3));
+            int a = jList1.getSelectedValue().indexOf("2");//Определение типа документа(платежка,накладная или заявка на оплату)
+            jDialog1.setTitle(jList1.getSelectedValue().substring(0, a-3));//Извлечение слова из заголовка
             jTextArea1.setText(bigdata.get(jList1.getSelectedIndex()));
         }
     }//GEN-LAST:event_view1ActionPerformed
@@ -238,7 +231,9 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void okActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okActionPerformed
         if(av.get() == "add") {
-        bigdata.add(jTextArea1.getText());
+        bigdata.add(jTextArea1.getText());//Добавление док-та в список данных
+        setTitle(jTextArea1.getText());
+        list.addElement(title);//Добавление в лист док/та с заголовком title
         }
         else if(av.get() == "view") {
             bigdata.set(jList1.getSelectedIndex(), jTextArea1.getText());
@@ -249,8 +244,6 @@ public class MainFrame extends javax.swing.JFrame {
     private void paymentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paymentActionPerformed
         av.set("add");
         p = new Payment();
-        String title = payment.getText() + " от " + sdform.format(p.getData()) + " номер: " + p.getNum();
-        list.addElement(title);
         jDialog1.setVisible(true);
         jDialog1.setTitle(payment.getText());
         String s = "Номер: " +"\n" + "Дата: " + sdform.format(p.getData()) + "\n" + "Пользователь: " + "\n" + "Сумма: " + "\n" + "Сотрудник: ";
@@ -261,12 +254,11 @@ public class MainFrame extends javax.swing.JFrame {
     private void payment_request1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_payment_request1ActionPerformed
         av.set("add");
         pr = new PaymentRequest();
-        String title = payment_request1.getText() + " от " + sdform.format(pr.getData()) + " номер: " + pr.getNum();
-        list.addElement(title);
         jDialog1.setTitle(payment_request1.getText());
         jDialog1.setVisible(true);
         String s = "Номер: " + "\n" + "Дата: " + sdform.format(pr.getData()) + "\n" + "Пользователь: " + "\n" + "Контрагент: " + "\n" + "Сумма: " + "\n" + "Валюта: " + "\n" + "Курс Валюты: " + "\n" + "Комиссия: ";
         jTextArea1.setText(s);
+        
     }//GEN-LAST:event_payment_request1ActionPerformed
 
     private void save1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_save1ActionPerformed
@@ -283,7 +275,6 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_save1ActionPerformed
 
     private void load1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_load1ActionPerformed
-        
             try {
                 if(jFileChooser1.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                     open = new BufferedReader(new FileReader(jFileChooser1.getSelectedFile().getName()));
@@ -291,12 +282,12 @@ public class MainFrame extends javax.swing.JFrame {
                     StringBuilder sb = new StringBuilder();
                     String ls = System.getProperty("line.separator");
                     while((newFile = open.readLine()) != null) {
-                    sb.append(newFile);
-                    sb.append(ls);
+                        sb.append(newFile);
+                        sb.append(ls);
                     }
                     sb.deleteCharAt(sb.length()-1);
                     bigdata.add(sb.toString());
-                    String title =  "file";
+                    setTitle(sb.toString());
                     list.addElement(title);
                     open.close();
                 }  
@@ -304,7 +295,16 @@ public class MainFrame extends javax.swing.JFrame {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_load1ActionPerformed
-
+    public void setTitle(String s) { //Определение типа(заголовка) документа(платежка,накладная или заявка на оплату)
+        if(s.contains("Количество")) {
+            title = invoice1.getText() + " от " + sdform.format(new Date()) + " номер: " + inv.getNum();
+        } else if (s.contains("Сотрудник")) {
+            title = payment.getText() + " от " + sdform.format(new Date()) + " номер: " + p.getNum();
+        } else if (s.contains("Комиссия")) {
+            title = payment_request1.getText() + " от " + sdform.format(new Date()) + " номер: " + pr.getNum();
+        }
+    }
+    
     /**
      * @param args the command line arguments
      */
