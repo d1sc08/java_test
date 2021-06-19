@@ -9,7 +9,7 @@ import java.util.Date;
 
 public class Payment {
     private String number;
-    private Date data = new Date();
+    private Date data;
     private String user;
     private double sum;
     private String worker;

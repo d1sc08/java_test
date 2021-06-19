@@ -14,9 +14,9 @@ public class MainFrame extends javax.swing.JFrame {
     DefaultListModel list = new DefaultListModel();
     File file = new File("");
     SimpleDateFormat sdform = new SimpleDateFormat("yyyy-MM-dd");
-    Invoice inv;
-    Payment p;
-    PaymentRequest pr;
+    Invoice inv = new Invoice();
+    Payment p = new Payment();
+    PaymentRequest pr = new PaymentRequest();;
     BufferedWriter save;
     BufferedReader open;
     List<String> bigdata = new ArrayList<String>();
@@ -207,10 +207,10 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void invoice1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invoice1ActionPerformed
         av.set("add"); //Определение выборки "Добавление нового док-та" для кнопки "ок"
-        inv = new Invoice();
+        inv.setData(new Date());
         jDialog1.setVisible(true);
         jDialog1.setTitle(invoice1.getText());
-        String s = "Номер: " + inv.getNum() + "\n" + "Дата: " + sdform.format(new Date()) + "\n" + "Пользователь: " + "\n" + "Сумма: " + "\n" + "Валюта: " + "\n" + "Курс Валюты: " + "\n" + "Товар: " + "\n" + "Количество: ";
+        String s = String.format("Номер: %s\nДата: %s\nПользователь: %s\nСумма: %f\nВалюта: %s\nКурс Валюты: %f\nТовар: %s\nКоличество: %f", inv.getNum(), sdform.format(inv.getData()), inv.getUser(), inv.getSum(), inv.getValue(), inv.getcValue(), inv.getItem(), inv.getCount());
         jTextArea1.setText(s);
         
     }//GEN-LAST:event_invoice1ActionPerformed
@@ -232,7 +232,7 @@ public class MainFrame extends javax.swing.JFrame {
     private void okActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okActionPerformed
         if(av.get() == "add") {
         bigdata.add(jTextArea1.getText());//Добавление док-та в список данных
-        setTitle(jTextArea1.getText());
+        Title(jTextArea1.getText());
         list.addElement(title);//Добавление в лист док/та с заголовком title
         }
         else if(av.get() == "view") {
@@ -243,20 +243,20 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void paymentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paymentActionPerformed
         av.set("add");
-        p = new Payment();
+        p.setData(new Date());
         jDialog1.setVisible(true);
         jDialog1.setTitle(payment.getText());
-        String s = "Номер: " +"\n" + "Дата: " + sdform.format(p.getData()) + "\n" + "Пользователь: " + "\n" + "Сумма: " + "\n" + "Сотрудник: ";
+        String s = String.format("Номер: %s\nДата: %s\nПользователь: %s\nСумма: %f\nСотрудник: %s", p.getNum(), sdform.format(p.getData()),p.getUser(), p.getSum(), p.getWorker());
         jTextArea1.setText(s);
            
     }//GEN-LAST:event_paymentActionPerformed
 
     private void payment_request1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_payment_request1ActionPerformed
         av.set("add");
-        pr = new PaymentRequest();
+        pr.setData(new Date());
         jDialog1.setTitle(payment_request1.getText());
         jDialog1.setVisible(true);
-        String s = "Номер: " + "\n" + "Дата: " + sdform.format(pr.getData()) + "\n" + "Пользователь: " + "\n" + "Контрагент: " + "\n" + "Сумма: " + "\n" + "Валюта: " + "\n" + "Курс Валюты: " + "\n" + "Комиссия: ";
+        String s = String.format("Номер: %s\nДата: %s\nПользователь: %s\nКонтрагент: %s\nСумма: %f\nВалюта: %s\nКурс Валюты: %f\nКомиссия: %f", pr.getNum(), sdform.format(pr.getData()),pr.getUser(), pr.getContr(), pr.getSum(), pr.getValue(), pr.getcValue(), pr.getChange());
         jTextArea1.setText(s);
         
     }//GEN-LAST:event_payment_request1ActionPerformed
@@ -287,7 +287,7 @@ public class MainFrame extends javax.swing.JFrame {
                     }
                     sb.deleteCharAt(sb.length()-1);
                     bigdata.add(sb.toString());
-                    setTitle(sb.toString());
+                    Title(sb.toString());
                     list.addElement(title);
                     open.close();
                 }  
@@ -295,13 +295,14 @@ public class MainFrame extends javax.swing.JFrame {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_load1ActionPerformed
-    public void setTitle(String s) { //Определение типа(заголовка) документа(платежка,накладная или заявка на оплату)
+    
+    public void Title(String s) { //Определение типа(заголовка) документа(платежка,накладная или заявка на оплату)
         if(s.contains("Количество")) {
-            title = invoice1.getText() + " от " + sdform.format(new Date()) + " номер: " + inv.getNum();
+            title = String.format("%s от %s номер: %s", invoice1.getText(), sdform.format(new Date()), inv.getNum());
         } else if (s.contains("Сотрудник")) {
-            title = payment.getText() + " от " + sdform.format(new Date()) + " номер: " + p.getNum();
+            title = String.format("%s от %s номер: %s", payment.getText(), sdform.format(new Date()), p.getNum());
         } else if (s.contains("Комиссия")) {
-            title = payment_request1.getText() + " от " + sdform.format(new Date()) + " номер: " + pr.getNum();
+            title = String.format("%s от %s номер: %s", payment_request1.getText(), sdform.format(new Date()), pr.getNum());
         }
     }
     
