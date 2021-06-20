@@ -22,6 +22,7 @@ public class MainFrame extends javax.swing.JFrame {
     List<String> bigdata = new ArrayList<String>();
     Available av = new Available();
     String title = null;
+    RandomNum rn = new RandomNum();
 
     public MainFrame() {
         initComponents();
@@ -206,12 +207,10 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void invoice1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invoice1ActionPerformed
-        av.set("add"); //Определение выборки "Добавление нового док-та" для кнопки "ок"
         inv.setData(new Date());
-        jDialog1.setVisible(true);
-        jDialog1.setTitle(invoice1.getText());
+        inv.setNum(rn.RndNum());
         String s = String.format("Номер: %s\nДата: %s\nПользователь: %s\nСумма: %f\nВалюта: %s\nКурс Валюты: %f\nТовар: %s\nКоличество: %f", inv.getNum(), sdform.format(inv.getData()), inv.getUser(), inv.getSum(), inv.getValue(), inv.getcValue(), inv.getItem(), inv.getCount());
-        jTextArea1.setText(s);
+        ButtonAction(invoice1.getText(), s);
         
     }//GEN-LAST:event_invoice1ActionPerformed
 
@@ -231,9 +230,8 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void okActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okActionPerformed
         if(av.get() == "add") {
-        bigdata.add(jTextArea1.getText());//Добавление док-та в список данных
-        Title(jTextArea1.getText());
-        list.addElement(title);//Добавление в лист док/та с заголовком title
+            Title(jTextArea1.getText());
+            AddElement(jTextArea1.getText(), title);
         }
         else if(av.get() == "view") {
             bigdata.set(jList1.getSelectedIndex(), jTextArea1.getText());
@@ -242,22 +240,17 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_okActionPerformed
 
     private void paymentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paymentActionPerformed
-        av.set("add");
         p.setData(new Date());
-        jDialog1.setVisible(true);
-        jDialog1.setTitle(payment.getText());
+        p.setNum(rn.RndNum());
         String s = String.format("Номер: %s\nДата: %s\nПользователь: %s\nСумма: %f\nСотрудник: %s", p.getNum(), sdform.format(p.getData()),p.getUser(), p.getSum(), p.getWorker());
-        jTextArea1.setText(s);
-           
+        ButtonAction(payment.getText(), s); 
     }//GEN-LAST:event_paymentActionPerformed
 
     private void payment_request1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_payment_request1ActionPerformed
-        av.set("add");
         pr.setData(new Date());
-        jDialog1.setTitle(payment_request1.getText());
-        jDialog1.setVisible(true);
+        pr.setNum(rn.RndNum());
         String s = String.format("Номер: %s\nДата: %s\nПользователь: %s\nКонтрагент: %s\nСумма: %f\nВалюта: %s\nКурс Валюты: %f\nКомиссия: %f", pr.getNum(), sdform.format(pr.getData()),pr.getUser(), pr.getContr(), pr.getSum(), pr.getValue(), pr.getcValue(), pr.getChange());
-        jTextArea1.setText(s);
+        ButtonAction(payment_request1.getText(), s);
         
     }//GEN-LAST:event_payment_request1ActionPerformed
 
@@ -286,9 +279,8 @@ public class MainFrame extends javax.swing.JFrame {
                         sb.append(ls);
                     }
                     sb.deleteCharAt(sb.length()-1);
-                    bigdata.add(sb.toString());
                     Title(sb.toString());
-                    list.addElement(title);
+                    AddElement(sb.toString(), title);
                     open.close();
                 }  
         } catch (IOException ex) {
@@ -305,6 +297,19 @@ public class MainFrame extends javax.swing.JFrame {
             title = String.format("%s от %s номер: %s", payment_request1.getText(), sdform.format(new Date()), pr.getNum());
         }
     }
+    
+    public void ButtonAction(String str, String s) {
+        av.set("add");//Определение выборки "Добавление нового док-та" для кнопки "ок"
+        jDialog1.setTitle(str);
+        jDialog1.setVisible(true);
+        jTextArea1.setText(s);
+        
+    }
+    
+    public void AddElement(String s1, String t){
+        bigdata.add(s1);//Добавление док-та в список данных
+        list.addElement(t);//Добавление в лист док-та с заголовком title
+    }      
     
     /**
      * @param args the command line arguments
